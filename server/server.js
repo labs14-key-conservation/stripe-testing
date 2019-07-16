@@ -20,12 +20,27 @@ server.get("/", (req, res) => {
   res.send(`<h1>THE SERVER IS LIVE!</h1>`);
 });
 
+// # Stripe Stuff XD # //
+const stripe = require("stripe")(process.env.YOUR_STRIPE_SECRET_KEY);
+
+server.post("/api/doPayment/", (req, res) => {
+  return stripe.charges
+    .create({
+      amount: req.body.amount, // Unit: cents
+      currency: "usd",
+      source: req.body.tokenId,
+      description: "Test payment"
+    })
+    .then(result => res.status(200).json(result));
+});
+
+
 // # Define Routes # //
 
 // # Logger # //
-function logger(req, res, next) {
-  console.log(` [${new Date().toISOString()}] ${req.method} to ${req.url}`);
-  next();
-}
+// function logger(req, res, next) {
+//   console.log(` [${new Date().toISOString()}] ${req.method} to ${req.url}`);
+//   next();
+// }
 
 module.exports = server;
