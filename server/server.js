@@ -23,17 +23,28 @@ server.get("/", (req, res) => {
 // # Stripe Stuff XD # //
 const stripe = require("stripe")(process.env.YOUR_STRIPE_SECRET_KEY);
 
-server.post("/api/doPayment/", (req, res) => {
+server.post("/api/doPayment/", async (req, res) => {
   return stripe.charges
-    .create({
-      amount: req.body.amount, // Unit: cents
-      currency: "usd",
-      source: req.body.tokenId,
-      description: "Test payment"
-    })
-    .then(result => res.status(200).json(result));
+    .create(
+      {
+        // Amount is required
+        // Currency is a required field.
+        amount: req.body.amount,
+        currency: "usd",
+        source: "tok_visa", // obtained with Stripe.js
+        description: "test tstCharge for tas.tas@example.com"
+      },
+      function(err, charge) {
+        console.log(err, charge);
+      }
+    )
+    .then(result => res.status(200).json(result))
+    .catch(res => {
+      console.log(res);
+      console.log(create);
+      res.status(500).json(res);
+    });
 });
-
 
 // # Define Routes # //
 
