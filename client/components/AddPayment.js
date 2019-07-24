@@ -1,4 +1,5 @@
 import React from 'react';
+import axios from 'axios'
 import AddPaymentView from './AddPaymentView';
 
 const STRIPE_ERROR = 'Payment service error. Try again later.';
@@ -23,7 +24,7 @@ const getCreditCardToken = (creditCardData) => {
     'card[name]': creditCardData.values.name
   };
 
-  return fetch('https://api.stripe.com/v1/tokens', {
+  return fetch(`https://api.stripe.com/v1/tokens`, {
     headers: {
       // Use the correct MIME type for your server
       Accept: 'application/json',
@@ -39,7 +40,9 @@ const getCreditCardToken = (creditCardData) => {
     body: Object.keys(card)
       .map(key => key + '=' + card[key])
       .join('&')
-  }).then(response => response.json());
+  }).then(res => {
+    return res.json()
+  });
 };
 
 /**
@@ -104,6 +107,20 @@ export default class AddPayment extends React.Component {
       this.setState({ submitted: false, error: SERVER_ERROR });
     } else {
       this.setState({ submitted: false, error: null });
+
+      const tok = {
+        token: creditCardToken.id
+      }
+
+      axios
+      .post('http://localhost:5000/api/doPayment', tok)
+      .then(res => {
+        console.log(res)
+      })
+      .catch(err => {
+        console.log(err)
+      })
+
       history.push('/')
     }
   };
