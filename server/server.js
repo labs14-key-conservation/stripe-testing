@@ -21,18 +21,18 @@ server.get("/", (req, res) => {
 });
 
 // # Stripe Stuff XD # //
-const stripe = require("stripe")(process.env.YOUR_STRIPE_SECRET_KEY);
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
-server.post("/api/doPayment/", async (req, res) => {
+server.post("/api/doPayment", async (req, res) => {
   return stripe.charges
     .create(
       {
         // Amount is required
         // Currency is a required field.
-        amount: req.body.amount,
+        amount: 444,
         currency: "usd",
-        source: "tok_visa", // obtained with Stripe.js
-        description: "test tstCharge for tas.tas@example.com"
+        source: req.body.token, // obtained with Stripe.js
+        description: "its working"
       },
       function(err, charge) {
         console.log(err, charge);
