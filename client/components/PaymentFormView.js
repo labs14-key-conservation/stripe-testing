@@ -2,11 +2,14 @@ import React, { Component } from 'react';
 import { StyleSheet, Text, View, Button, TextInput } from 'react-native';
 import { CreditCardInput } from 'react-native-credit-card-input';
 import { FontAwesome } from '@expo/vector-icons';
+
+import { connect } from 'react-redux';
+import { extraPaymentInfo } from '../actions'
 /**
  * Renders the payment form and handles the credit card data
  * using the CreditCardInput component.
  */
-export default class PaymentFormView extends Component {
+class PaymentFormView extends Component {
     state = {
       cardData: {
         valid: false
@@ -18,28 +21,13 @@ export default class PaymentFormView extends Component {
       orgStripeAccountId: '1234',
     }
 
-  onChangeHandler = e => {
-    const value = e.nativeEvent.text
-    const name = e.nativeEvent.target
-    console.log(value)
-    const total = ( value + .3)/(1 - .029)
-
-    if(name === 149) {
-      this.setState({
-        ...this.state,
-        orgTotalAmount: total,
-        totalAmount: this.state.orgTotalAmount + this.state.keyTotalAmount
-      })
-    } else if (name === 157) {
-      this.setState({
-        ...this.state,
-        keyTotalAmount: total,
-        totalAmount: this.state.orgTotalAmount + this.state.keyTotalAmount
-      })
+    componentDidUpdate(prevState) {
+      if(this.state.totalAmount !== prevState.totalAmount) {
+        console.log('update')
+        extraPaymentInfo(this.state)
+      }
     }
 
-    // extraPaymentInfo(this.state)
-  }
 
 
   render() {
@@ -52,22 +40,41 @@ export default class PaymentFormView extends Component {
             cardData: cardData
           })} />
 
+          <Text>Org Donation</Text>
           <TextInput
-            id='orgAmount'
             value={this.state.orgTotalAmount}
-            onChange={this.onChangeHandler}
-          />
-          <Text>{this.state.orgTotalAmount}</Text>
+            onChangeText={text => {
+              let orgAmount = (parseInt(text, 10) + .3)/(1 - .029)
+              orgAmount.toFixed(2).toString(10)
 
-          <TextInput
-            id='keyAmount'
-            value={this.state.keyTotalAmount}
-            onChange={this.onChangeHandler}
+              this.setState({
+                ...this.state,
+                orgTotalAmount: orgAmount,
+                totalAmount: orgAmount + this.state.keyTotalAmount
+              })
+            }}
           />
-          <Text>{this.state.keyTotalAmount}</Text>
+          <Text>Org total</Text>
+          <Text>{this.state.orgTotalAmount.toFixed(2)}</Text>
+
+          <Text>Key Donation</Text>
+          <TextInput
+            value={this.state.keyTotalAmount}
+            onChangeText={text => {
+              let keyAmount = (parseInt(text, 10) + .3)/(1 - .029)
+
+              this.setState({
+                ...this.state,
+                keyTotalAmount: keyAmount,
+                totalAmount: this.state.orgTotalAmount + keyAmount
+              })
+            }}
+          />
+          <Text>Key total</Text>
+          <Text>{this.state.keyTotalAmount.toFixed(2)}</Text>
 
           <Text>Total Donation Amount for this campaign</Text>
-          <Text>{this.state.totalAmount}</Text>
+          <Text>{this.state.totalAmount.toFixed(2)}</Text>
         </View>
         <View style={styles.buttonWrapper}>
           <Button
@@ -91,6 +98,12 @@ export default class PaymentFormView extends Component {
     );
   }
 }
+
+export default connect(
+  null,
+  { extraPaymentInfo }
+)(PaymentFormView);
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,

@@ -6,6 +6,8 @@ const STRIPE_ERROR = 'Payment service error. Try again later.';
 const SERVER_ERROR = 'Server error. Try again later.';
 const STRIPE_PUBLISHABLE_KEY = 'pk_test_EBcmc6Evy9AbQlpgJYIhB27v00mK1APHLR';
 
+import { connect } from 'react-redux';
+
 /**
  * The method sends HTTP requests to the Stripe API.
  * It's necessary to manually send the payment data
@@ -67,7 +69,7 @@ const subscribeUser = (creditCardToken) => {
  * The main class that submits the credit card data and
  * handles the response from Stripe.
  */
-export default class AddPayment extends React.Component {
+class AddPayment extends React.Component {
   static navigationOptions = {
     title: 'payment',
   };
@@ -118,10 +120,11 @@ export default class AddPayment extends React.Component {
 
       const tok = {
         token: creditCardToken.id,
-        // orgAmount: data.orgTotalAmount,
-        // keyAmount: data.keyTotalAmount,
-        // description: data.description,
-        // stripeAccountId: data.orgStripeAccountId
+        orgAmount: this.props.orgTotalAmount,
+        keyAmount: this.props.keyTotalAmount,
+        totalAmount: this.props.totalAmount,
+        description: this.props.description,
+        stripeAccountId: this.props.orgStripeAccountId
       }
 
       axios
@@ -148,3 +151,16 @@ export default class AddPayment extends React.Component {
     );
   }
 }
+
+const mapStateToProps = state => ({
+  orgTotalAmount: state.orgTotalAmount,
+  keyTotalAmount: state.keyTotalAmount,
+  totalAmount: state.totalAmount,
+  description: state.description,
+  orgStripeAccountId: state.orgStripeAccountId,
+});
+
+export default connect(
+  mapStateToProps,
+  { }
+)(AddPayment);
