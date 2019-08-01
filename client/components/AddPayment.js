@@ -16,6 +16,7 @@ const STRIPE_PUBLISHABLE_KEY = 'pk_test_EBcmc6Evy9AbQlpgJYIhB27v00mK1APHLR';
  * @return Promise with the Stripe data
  */
 const getCreditCardToken = (creditCardData) => {
+  console.log(creditCardData)
   const card = {
     'card[number]': creditCardData.values.number.replace(/ /g, ''),
     'card[exp_month]': creditCardData.values.expiry.split('/')[0],
@@ -23,6 +24,8 @@ const getCreditCardToken = (creditCardData) => {
     'card[cvc]': creditCardData.values.cvc,
     'card[name]': creditCardData.values.name
   };
+
+
 
   return fetch(`https://api.stripe.com/v1/tokens`, {
     headers: {
@@ -73,7 +76,12 @@ export default class AddPayment extends React.Component {
     super(props);
     this.state = {
       submitted: false,
-      error: null
+      error: null,
+      // orgTotalAmount: '0',
+      // keyTotalAmount: '0',
+      // totalAmount: '0',
+      // description: 'Donation',
+      // orgStripeAccountId: '1234',
     }
   }
 
@@ -109,11 +117,15 @@ export default class AddPayment extends React.Component {
       this.setState({ submitted: false, error: null });
 
       const tok = {
-        token: creditCardToken.id
+        token: creditCardToken.id,
+        // orgAmount: data.orgTotalAmount,
+        // keyAmount: data.keyTotalAmount,
+        // description: data.description,
+        // stripeAccountId: data.orgStripeAccountId
       }
 
       axios
-      .post('http://localhost:5000/api/doPayment', tok)
+      .post('https://9652be29.ngrok.io/api/doPayment', tok)
       .then(res => {
         console.log(res)
       })

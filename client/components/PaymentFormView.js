@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Button } from 'react-native';
+import { StyleSheet, Text, View, Button, TextInput } from 'react-native';
 import { CreditCardInput } from 'react-native-credit-card-input';
 import { FontAwesome } from '@expo/vector-icons';
 /**
@@ -7,20 +7,67 @@ import { FontAwesome } from '@expo/vector-icons';
  * using the CreditCardInput component.
  */
 export default class PaymentFormView extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
+    state = {
       cardData: {
         valid: false
-      }
-    };
+      },
+      orgTotalAmount: 0,
+      keyTotalAmount: 0,
+      totalAmount: 0,
+      description: 'Donation',
+      orgStripeAccountId: '1234',
+    }
+
+  onChangeHandler = e => {
+    const value = e.nativeEvent.text
+    const name = e.nativeEvent.target
+    console.log(value)
+    const total = ( value + .3)/(1 - .029)
+
+    if(name === 149) {
+      this.setState({
+        ...this.state,
+        orgTotalAmount: total,
+        totalAmount: this.state.orgTotalAmount + this.state.keyTotalAmount
+      })
+    } else if (name === 157) {
+      this.setState({
+        ...this.state,
+        keyTotalAmount: total,
+        totalAmount: this.state.orgTotalAmount + this.state.keyTotalAmount
+      })
+    }
+
+    // extraPaymentInfo(this.state)
   }
+
+
   render() {
     const { onSubmit, submitted, error } = this.props;
     return (
       <View>
         <View>
-          <CreditCardInput requiresName onChange={(cardData) => this.setState({ cardData })} />
+          <CreditCardInput requiresName onChange={(cardData) => this.setState({
+            ...this.state,
+            cardData: cardData
+          })} />
+
+          <TextInput
+            id='orgAmount'
+            value={this.state.orgTotalAmount}
+            onChange={this.onChangeHandler}
+          />
+          <Text>{this.state.orgTotalAmount}</Text>
+
+          <TextInput
+            id='keyAmount'
+            value={this.state.keyTotalAmount}
+            onChange={this.onChangeHandler}
+          />
+          <Text>{this.state.keyTotalAmount}</Text>
+
+          <Text>Total Donation Amount for this campaign</Text>
+          <Text>{this.state.totalAmount}</Text>
         </View>
         <View style={styles.buttonWrapper}>
           <Button
