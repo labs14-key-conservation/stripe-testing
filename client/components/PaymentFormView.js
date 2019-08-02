@@ -60,7 +60,7 @@ class PaymentFormView extends Component {
           <TextInput
             value={this.state.keyTotalAmount}
             onChangeText={text => {
-              let keyAmount = (parseInt(text, 10) + .3)/(1 - .029)
+              let keyAmount = (parseInt(text, 10))/(1 - .029)
 
               this.setState({
                 ...this.state,

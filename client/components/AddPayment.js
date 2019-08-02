@@ -128,7 +128,7 @@ class AddPayment extends React.Component {
       }
 
       axios
-      .post('https://9652be29.ngrok.io/api/doPayment', tok)
+      .post('https://dc18d3af.ngrok.io/api/doPayment', tok)
       .then(res => {
         console.log(res)
       })
