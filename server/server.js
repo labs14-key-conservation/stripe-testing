@@ -26,14 +26,14 @@ const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 server.post("/api/doPayment", async (req, res) => {
   const number = parseFloat(req.body.totalAmount).toFixed(2)
   const amount = Math.round(number * 100)
-  
+
   return stripe.charges
     .create(
       {
         // Amount is required
         // Currency is a required field.
         amount: amount,
-        currency: "usd",
+        currency: "USD",
         source: req.body.token, // obtained with Stripe.js
         description: req.body.description,
 
