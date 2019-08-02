@@ -11,7 +11,9 @@ import reducer from "./reducers";
 
 let composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
-let store = createStore(reducer, composeEnhancers(applyMiddleware(thunk)));
+let store = createStore(
+  reducer,
+  composeEnhancers(applyMiddleware(thunk)));
 
 export default function App() {
   return (

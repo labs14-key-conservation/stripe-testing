@@ -13,11 +13,13 @@ const initialState = {
 const reducer = (state = initialState, action) => {
   switch(action.type) {
     case SUBMITED_INFO:
+    const amount = parseInt(action.payload.totalAmount, 10).toFixed(2)
+    console.log(typeof amount, '---------------------------------------------------Reducers')
       return {
         ...state,
-        orgTotalAmount: action.payload.orgTotalAmount.toFixed(2),
-        keyTotalAmount: action.payload.keyTotalAmount.toFixed(2),
-        totalAmount: action.payload.totalAmount.toFixed(2),
+        orgTotalAmount: action.payload.orgTotalAmount,
+        keyTotalAmount: action.payload.keyTotalAmount,
+        totalAmount: action.payload.totalAmount,
         description: action.payload.description,
         orgStripeAccountId: action.payload.orgStripeAccountId
       }

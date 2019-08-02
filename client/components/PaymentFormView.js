@@ -24,7 +24,7 @@ class PaymentFormView extends Component {
     componentDidUpdate(prevState) {
       if(this.state.totalAmount !== prevState.totalAmount) {
         console.log('update')
-        extraPaymentInfo(this.state)
+        this.props.extraPaymentInfo(this.state)
       }
     }
 
@@ -45,7 +45,6 @@ class PaymentFormView extends Component {
             value={this.state.orgTotalAmount}
             onChangeText={text => {
               let orgAmount = (parseInt(text, 10) + .3)/(1 - .029)
-              orgAmount.toFixed(2).toString(10)
 
               this.setState({
                 ...this.state,

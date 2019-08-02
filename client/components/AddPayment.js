@@ -122,7 +122,7 @@ class AddPayment extends React.Component {
         token: creditCardToken.id,
         orgAmount: this.props.orgTotalAmount,
         keyAmount: this.props.keyTotalAmount,
-        totalAmount: this.props.totalAmount,
+        totalAmount: Number(this.props.totalAmount).toFixed(2),
         description: this.props.description,
         stripeAccountId: this.props.orgStripeAccountId
       }
