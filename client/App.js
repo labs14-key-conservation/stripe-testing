@@ -4,6 +4,7 @@ import { NativeRouter, Route, Link, Switch } from "react-router-native";
 import AddPayment from "./components/AddPayment";
 import Home from "./components/Home";
 
+// Setting up Redux and redux store
 import { createStore, combineReducers, applyMiddleware, compose } from 'redux';
 import { Provider } from 'react-redux'
 import thunk from 'redux-thunk';
@@ -17,6 +18,7 @@ let store = createStore(
 
 export default function App() {
   return (
+    // Provider for redux
     <Provider store={store}>
       <View style={styles.container}>
         <NativeRouter>

@@ -4,12 +4,12 @@ import AddPaymentView from './AddPaymentView';
 
 const STRIPE_ERROR = 'Payment service error. Try again later.';
 const SERVER_ERROR = 'Server error. Try again later.';
-const STRIPE_PUBLISHABLE_KEY = 'pk_test_EBcmc6Evy9AbQlpgJYIhB27v00mK1APHLR';
+const STRIPE_PUBLISHABLE_KEY = 'STRIPE_PUBLISHABLE_KEY';
 
 import { connect } from 'react-redux';
 
 /**
- * The method sends HTTP requests to the Stripe API.
+ * The method sends HTTPS requests to the Stripe API.
  * It's necessary to manually send the payment data
  * to Stripe because using Stripe Elements in React Native apps
  * isn't possible.
@@ -18,7 +18,7 @@ import { connect } from 'react-redux';
  * @return Promise with the Stripe data
  */
 const getCreditCardToken = (creditCardData) => {
-  console.log(creditCardData)
+
   const card = {
     'card[number]': creditCardData.values.number.replace(/ /g, ''),
     'card[exp_month]': creditCardData.values.expiry.split('/')[0],
@@ -78,12 +78,7 @@ class AddPayment extends React.Component {
     super(props);
     this.state = {
       submitted: false,
-      error: null,
-      // orgTotalAmount: '0',
-      // keyTotalAmount: '0',
-      // totalAmount: '0',
-      // description: 'Donation',
-      // orgStripeAccountId: '1234',
+      error: null
     }
   }
 
@@ -118,6 +113,7 @@ class AddPayment extends React.Component {
     } else {
       this.setState({ submitted: false, error: null });
 
+      // Object to be sent to server to be used to create charge, and customer in stripe
       const tok = {
         token: creditCardToken.id,
         orgAmount: this.props.orgTotalAmount,
@@ -127,6 +123,8 @@ class AddPayment extends React.Component {
         stripeAccountId: this.props.orgStripeAccountId
       }
 
+      // NOTE: NGROK is required here to work on a real device. Real devices will not
+      // submit a HTTP request. Must be HTTPS.
       axios
       .post('https://dc18d3af.ngrok.io/api/doPayment', tok)
       .then(res => {
