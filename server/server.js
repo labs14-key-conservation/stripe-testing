@@ -14,7 +14,6 @@ server.use(express());
 server.use(express.json());
 server.use(helmet());
 server.use(cors(corsOptions));
-// server.use(logger());
 
 server.get("/", (req, res) => {
   res.send(`<h1>THE SERVER IS LIVE!</h1>`);
@@ -24,6 +23,8 @@ server.get("/", (req, res) => {
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 server.post("/api/doPayment", async (req, res) => {
+  // Stripe takes in amount by cents, which means if you are charging $4.50
+  // the amount sent to stripe would be 450. Hence the rounding and multiplying by 100 below
   const number = parseFloat(req.body.totalAmount).toFixed(2)
   const amount = Math.round(number * 100)
 
@@ -37,6 +38,7 @@ server.post("/api/doPayment", async (req, res) => {
         source: req.body.token, // obtained with Stripe.js
         description: req.body.description,
 
+        // NOTE: transfer_data is to send money to specific accounts on a connect Stripe Platform.
         // transfer_data: {
         //
         //   amount: parseInt(req.body.orgAmount, 10),
@@ -55,13 +57,5 @@ server.post("/api/doPayment", async (req, res) => {
       res.status(500).json(res);
     });
 });
-
-// # Define Routes # //
-
-// # Logger # //
-// function logger(req, res, next) {
-//   console.log(` [${new Date().toISOString()}] ${req.method} to ${req.url}`);
-//   next();
-// }
 
 module.exports = server;
